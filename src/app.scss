@@ -1,0 +1,32 @@
+@font-face {
+  font-family: "Fitzgerald";
+  src: url("lib/assets/HV\ Fitzgerald\ Italic.ttf");
+}
+
+@font-face {
+  font-family: "Kern";
+  src: url("lib/assets/Kern\ Cycle\ Variable\ Regular.ttf");
+}
+
+:root {
+  --school: #dd654b;
+  --club: #86a8ff;
+  --work: #fcaeeb;
+  --personal: #ffd13c;
+}
+
+body {
+  background-color: #faf7f5;
+  font-family: "Kern", sans-serif;
+  color: #d4bba5;
+
+  h1 {
+    font-family: "Fitzgerald", serif;
+    color: #dd654b;
+  }
+
+  .bold {
+    font-weight: bold;
+    color: #7b5f53;
+  }
+}

@@ -1,60 +1,109 @@
 <script lang="ts">
-  import { enhance } from '$app/forms'
+  import ControlPanel from '$lib/components/ControlPanel.svelte';
 
   import type { ActionData, PageData } from './types';
+  import { forceSimulation, forceManyBody, forceLink, forceX, forceY } from 'd3-force';
+  import { map } from 'd3';
+  import { drag } from 'd3-drag';
   
   export let data: PageData;
 
   export let form: ActionData;
 
   $: ({ tasks } = form || data);
-  $: console.log(tasks + "rerender");
+
+  // setting up the position for the circle pack
+	const move = (x: number, y: number) => `transform: translate(${x}px, ${y}px`;
+
+  const intern = (value: any) => {
+    return value !== null && typeof value === "object" ? value.valueOf() : value;
+  }
+
+  const d3drag = (simulation: any) => {    
+    const dragstarted = (event: any) => {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
+    
+    const dragged = (event: any) => {
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
+    
+    const dragended = (event: any) => {
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
+    
+    return drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended);
+  }
+
+  let innerHeight: number;
+  $: height = innerHeight / 2;
+  $: width = height;
+  
+  // Replace the input nodes and links with mutable objects for the simulation.
+  $: nodesOg = map(tasks, (d: any) => ({ id: d.taskId }));
+  $: linksOg = map(tasks, (d: any) => ({ source: d.parentId || d.taskId, target: d.taskId }));
+
+  $: links = linksOg.map((d: any) => Object.create(d));
+  $: nodes = nodesOg.map((d: any) => Object.create(d));
+  
+  $: N = map(nodes, (d: any) => d.id).map(intern);
+
+  // Construct the forces.
+  $: forceNodes = forceManyBody();
+  $: forceLinks = forceLink(links).id(({index: i}) => N[i]);
+  
+  $: simulation = forceSimulation(tasks)  
+    .nodes(nodes)
+    .force("link", forceLinks)
+    .force("charge", forceNodes)
+    .force("x", forceX())
+    .force("y", forceY())
+    
+  d3drag(simulation);
 </script>
 
-<div class="wrapper">
-  <h1>Viv's TickTick Viz</h1>
+<svelte:window bind:innerHeight />
 
-  <form action="?/fetchTasks" method="POST" use:enhance>
-    <section>
-      <p>
-        <label for="listName">List name:</label>
-        <select id="listName" name="listName">
-          <option value="📓school">📓school</option>
-          <option value="🍣work ">🍣work</option>
-          <option value="🥮club">🥮club</option>
-          <option value="🖼️personal">🖼️personal</option>
-        </select>
-      </p>
-    </section>
-    <section>
-      <p>
-        <button type="submit">Apply filters!</button>
-      </p>
-    </section>
-  </form>
+<div class="wrapper">
+  <h1>What did I to-do this semester?</h1>
+  <h4 class="bold">Spring 2023</h4>
   
-  <div>
-    <h3>Tasks:</h3>
-      <div class="task">
-        <b><p>Title</p></b>
-        <b><p>List Name</p></b>
-        <b><p>Tags</p></b>  
-      </div>
-    {#each tasks as task}
-      <div class="task">
-        <p>{task.title}</p>
-        <p>{task.listName}</p>
-        {#if task.tags}
-          <p>{task.tags}</p>
-        {/if}
-      </div>
-    {/each}
-  </div>
+  <ControlPanel/>
+
+	<svg {width} {height}>
+		<g style={move(height / 2, width / 2)}>
+      <!-- looping through to render each circle -->
+      {#each links as l}
+        <line
+          x1={l.source.x} 
+          y1={l.source.y}
+          x2={l.target.x} 
+          y2={l.target.y}
+          stroke="#d4bba5"
+        />
+      {/each}
+			{#each nodes as n}
+        <circle
+          cx={n.x}
+          cy={n.y}
+          r={5}
+          fill={"var(--" + tasks.find(task => task.taskId == n.id).listName.slice(2).trim() + ")"}
+        />
+      {/each}
+    </g>
+  </svg>
 </div>
 
 <style lang="scss">
   .wrapper {
-    font-family: Helvetica, sans-serif;
     padding: 10% 25%;
   }
 
