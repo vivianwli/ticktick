@@ -22,8 +22,6 @@
 <div class="timeline-container">
   <svg width={width + 50} height={height}>
     <g>
-      <rect x="-25" y="10" class="date-background" width="200" height="46"/>
-      <rect x={width - 160} y="10" class="date-background" width="250" height="46"/>
       <text x="15" y="30" fill="var(--body)">{new Date("2023-01-03").toDateString()}</text>
       <text text-anchor="end" fill="var(--body)" x={width} y="30">{new Date("2023-05-04").toDateString()}</text>
       <!-- main timeline -->
@@ -66,7 +64,7 @@
 <div class="timeline-overlay">
   <svg width={width + 50} height={height + 64}>
     <g>
-      <text text-anchor="middle" fill="var(--body-dark)" x={Math.min(Math.max(m.x, 110), width - 36)} y="32">{x(Math.min(Math.max(m.x, 15), width)).toDateString()}</text>
+      <text text-anchor="middle" fill="var(--body-dark)" x={Math.min(Math.max(m.x, 110), width - 34)} y="32">{x(Math.min(Math.max(m.x, 15), width)).toDateString()}</text>
     </g>
   </svg>
 </div>
@@ -93,10 +91,5 @@
     padding: 3rem 2rem 2rem 2rem;
     background-color: var(--background);
     filter: blur(1rem);
-  }
-
-  .date-background {
-    fill: var(--background);
-    filter: blur(0.3rem);
   }
 </style>

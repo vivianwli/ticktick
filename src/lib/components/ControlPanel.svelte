@@ -1,22 +1,72 @@
 <script>
-  import { enhance } from '$app/forms'
+  export let filter ="show all";
+  const filterOptions = ["📓school", "🍣work", "🥮club", "🖼️personal", "show all" ];
+
+  export let sort = "random";
+  const sortOptions = ["creation date", "completion date", "duration", "category", "random"];
 </script>
 
-<form action="?/fetchTasks" method="POST" use:enhance>
-  <section>
-    <p>
-      <label for="listName">List name:</label>
-      <select id="listName" name="listName">
-        <option value="📓school">📓school</option>
-        <option value="🍣work ">🍣work</option>
-        <option value="🥮club">🥮club</option>
-        <option value="🖼️personal">🖼️personal</option>
-      </select>
-    </p>
-  </section>
-  <section>
-    <p>
-      <button type="submit">Apply filters!</button>
-    </p>
-  </section>
-</form>
+<div class="panel-container">
+  <div class="option-list">
+    <div class="list-title">
+      filter to
+    </div>
+    {#each filterOptions as filterOption}
+      <div class="option {filter === filterOption ? "selected" : ""}" on:click={() => {filter = filterOption}}>
+        {filterOption}
+      </div>
+    {/each}
+  </div>
+  <div class="option-list">
+    <div class="list-title">
+      sort by
+    </div>
+    {#each sortOptions as sortOption}
+      <div class="option {sort === sortOption ? "selected" : ""}" on:click={() => {sort = sortOption}}>
+        {sortOption}
+      </div>
+    {/each}
+  </div>
+</div>
+
+<style lang="scss">
+  .panel-container {
+    display: none;
+  }
+
+  .option-list {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    font-size: 0.9rem;
+    align-items: center;
+  }
+
+  @media screen and (min-width: 1100px) {
+    .option-list {
+      justify-content: end;
+    }
+  }
+  
+  @media screen and (min-width: 600px) {
+    .panel-container {
+      display: block;
+    }
+  }
+
+  .list-title {
+    font-family: "Fitzgerald", serif;
+    font-size: 1.1rem;
+    color: var(--body-dark);
+  }
+  .selected {
+    font-weight: bold;
+    color: var(--body-dark);
+  }
+  .option {
+    cursor: pointer;
+    &:hover {
+      font-weight: bold;
+    }
+  }
+</style>
