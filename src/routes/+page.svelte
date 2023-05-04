@@ -6,7 +6,6 @@
 
   
 	import { fade, blur, fly} from 'svelte/transition';
-  import { flip } from 'svelte/animate';
 
   import TaskTooltip from '$lib/components/TaskTooltip.svelte';
   import Timeline from '$lib/components/Timeline.svelte';
@@ -35,6 +34,10 @@
     tasks: data.tasks.filter((item) => !item.parentId).map(buildTree(undefined)),
   };
 
+  const shuffledData = {
+    tasks: nestedData.tasks.sort((a, b) => 0.5 - Math.random())
+  };
+
   let Y = {};
   let currentY = 0;
 
@@ -51,7 +54,7 @@
   $: innerHeight = 0;
   $: innerWidth = 0;
   $: width = Math.max(0, innerWidth - 100);
-  $: height = width * 3;
+  $: height = currentY + 150;
   
   $: x = scaleTime()
     .domain([new Date("2023-01-01"), new Date("2023-05-04")])
@@ -68,11 +71,9 @@
   }
 
   let showChildren = [];
-  let recentToggledId = -1;
 
   const toggleChildren = (task) => {
     if (task.children) {
-      recentToggledId = task.taskId;
       let parentY = getY(task);
       Y = {};
       currentY = 0;
@@ -97,7 +98,7 @@
   <h1>To-dos of Spring 2023</h1>
   <div class="viz-container" on:mousemove={(e) => (m = { x: e.clientX, y: e.clientY })}>
     
-    <Timeline {width} scale={x}/>
+    <Timeline {width} scale={x} {m}/>
     
     {#if activeTask > -1}
       <div
@@ -107,12 +108,12 @@
       </div>
     {/if}
     {#key showChildren}
-      <svg width={width + 50} {height}>
+      <svg width={width + 50} height={height}>
         <g>
           <!-- looping through to render each circle -->
-          {#each nestedData.tasks as task (task.taskId)}
+          {#each shuffledData.tasks as task (task.taskId)}
             <g class="task {activeTask === task.taskId ? "active" : (activeTask > -1 ? "inactive" : "")}" in:blur={{duration: 500, delay: 300}} out:blur={{duration: 500}} on:click={() => toggleChildren(task)} on:mouseover={() => activateTask(task)} on:mouseout={deactivateTask}>
-              <rect x={x(task.createdTime)} y={getY(task) - 10} width={x(task.completedTime)-x(task.createdTime)} height=20 opacity=0/> 
+              <rect x={x(task.createdTime)} y={Math.max(5, getY(task) - 10)} width={x(task.completedTime)-x(task.createdTime)} height=20 opacity=0/> 
               <line
                 x1={x(task.createdTime)} 
                 x2={x(task.completedTime) - 4} 
@@ -141,7 +142,7 @@
                 <text 
                   class="parent-label" 
                   x={x(task.createdTime) - 10} 
-                  y={getY(task) + 4}
+                  y={Math.max(19, getY(task) + 4)}
                   fill="var(--{task.listName.slice(2).trim()})"
                 >
                   +{task.children.length} more
@@ -150,7 +151,7 @@
             </g>
             {#if showChildren.includes(task.taskId)}
                 {#each task.children as childTask (childTask.taskId)}
-                  <g class="task {activeTask === childTask.taskId ? "active" : ""}" in:fly={{y: -10, duration: 300, delay: 450}} out:fly={{y: 10, duration: 300}} on:mouseover={() => activateTask(childTask)} on:mouseout={deactivateTask}>
+                  <g class="task {activeTask === childTask.taskId ? "active" : (activeTask > -1 ? "inactive" : "")} child" in:fly={{y: -10, duration: 300, delay: 450}} out:fly={{y: 10, duration: 300}} on:mouseover={() => activateTask(childTask)} on:mouseout={deactivateTask}>
                     <rect 
                       x={x(childTask.createdTime)} 
                       y={getY(childTask) - 10} 
@@ -163,8 +164,8 @@
                       x2={x(childTask.completedTime) - 4} 
                       y1={getY(childTask)}
                       y2={getY(childTask)}
-                      stroke="var(--{task.listName.slice(2).trim()})"
-                      stroke-width=2
+                      stroke="var(--{task.listName.slice(2).trim()}-light)"
+                      stroke-width="1.5"
                       stroke-dasharray="4"
                       stroke-linecap="round"
                     />
@@ -199,7 +200,7 @@
                       y1={getY(task)}
                       y2={getY(childTask)}
                       stroke="var(--{task.listName.slice(2).trim()}-light)"
-                      stroke-width="2"
+                      stroke-width="1.5"
                       stroke-dasharray="4"
                       stroke-linecap="round"
                     />
@@ -220,7 +221,7 @@
   }
 
   .task {
-      filter: drop-shadow(0 0 2px var(--shadow));
+      filter: drop-shadow(0 0 1px var(--shadow));
       * {
         transition: all 0.3s;
       }
@@ -228,7 +229,6 @@
         filter: drop-shadow(0 0 3px var(--active-shadow));
       }
       &.inactive {
-        filter: drop-shadow(0 0 1px var(--shadow));
         line {
           stroke: var(--body-light);
         }
