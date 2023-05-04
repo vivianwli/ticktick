@@ -18,13 +18,20 @@
 
 <style>
   .tooltip-container {
-    padding: 0.3rem 1rem 1rem 1rem;
+    padding: 0.2rem 0.7rem 0.7rem 0.7rem;
     background-color: var(--background);
     color: var(--color);
     opacity: 0.8;
-    border: 2px solid var(--color);
-    border-radius: 0.5rem;
+    border: 1.75px solid var(--color);
+    border-radius: 0.4rem;
   }
+
+  p {
+    font-family: "Fitzgerald", serif;
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+  }
+
   .tags {
     display: flex;
     gap: 0.3rem;

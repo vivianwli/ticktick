@@ -16,7 +16,7 @@
   .tag {
     color: var(--color);
     border: 1px solid var(--color);
-    font-size: 0.8rem;
+    font-size: 0.65rem;
     padding: 0.25rem 0.6rem 0.25em 0.6rem;
     border-radius: 1rem;
     width: min-content;

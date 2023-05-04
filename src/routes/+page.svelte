@@ -118,7 +118,7 @@
     } else if (sortType === "category") {
       sortedData.tasks = filteredNestedData.tasks.sort((a, b) => a.listName.localeCompare(b.listName));
       nestedData.tasks.sort((a, b) => a.listName.localeCompare(b.listName));
-    }
+    } 
   }
 
   const filter = (filterType) => {

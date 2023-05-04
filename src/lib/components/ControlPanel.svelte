@@ -12,7 +12,7 @@
       filter to
     </div>
     {#each filterOptions as filterOption}
-      <div class="option {filter === filterOption ? "selected" : ""}" on:click={() => {filter = filterOption}}>
+      <div style="color: var(--{filterOption.slice(2).trim()})" class="option {filter === filterOption ? "selected" : ""}" on:click={() => {filter = filterOption}}>
         {filterOption}
       </div>
     {/each}

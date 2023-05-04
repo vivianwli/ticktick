@@ -13,7 +13,6 @@ model Task {
   parentId      Int?
   listName      String?   @db.Char(20)
   title         String?   @db.Char(150)
-  doDate        DateTime? @db.Date
   createdTime   DateTime? @db.Timestamptz(6)
   completedTime DateTime? @db.Timestamptz(6)
   status        Int?
