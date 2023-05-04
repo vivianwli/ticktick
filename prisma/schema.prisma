@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "binary"
 }
 
@@ -8,26 +8,18 @@ datasource db {
   url      = "postgresql://postgres:herecomesthesun@localhost:5432/todos-db?schema=public"
 }
 
-model Detail {
-  startDate     DateTime? @db.Timestamp(6)
-  dueDate       DateTime? @db.Timestamp(6)
-  repeat        String?   @db.Char(30)
-  priority      Int?
-  status        Int?
-  completedTime DateTime? @db.Timestamp(6)
-  taskId        Int       @id @default(autoincrement())
-  tasks         Task     @relation(fields: [taskId], references: [taskId], onDelete: NoAction, onUpdate: NoAction)
-  @@map("details")
-}
-
 model Task {
-  taskId      Int      @id(map: "t_pkey") @default(autoincrement())
-  parentId    Int?
-  listName    String?  @db.Char(20)
-  title       String?  @db.Char(150)
-  tags        String?  @db.Char(20)
-  details     Detail?
-  tasks       Task?   @relation("tasksTotasks", fields: [parentId], references: [taskId], onDelete: NoAction, onUpdate: NoAction)
-  other_tasks Task[]  @relation("tasksTotasks")
+  taskId        Int       @id(map: "t_pkey") @default(autoincrement())
+  parentId      Int?
+  listName      String?   @db.Char(20)
+  title         String?   @db.Char(150)
+  doDate        DateTime? @db.Date
+  createdTime   DateTime? @db.Timestamptz(6)
+  completedTime DateTime? @db.Timestamptz(6)
+  status        Int?
+  tags          String?   @db.Char(50)
+  tasks         Task?     @relation("tasksTotasks", fields: [parentId], references: [taskId], onDelete: NoAction, onUpdate: NoAction)
+  other_tasks   Task[]    @relation("tasksTotasks")
+
   @@map("tasks")
 }

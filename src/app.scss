@@ -9,24 +9,47 @@
 }
 
 :root {
-  --school: #dd654b;
-  --club: #86a8ff;
-  --work: #fcaeeb;
-  --personal: #ffd13c;
+  --school: rgb(221, 101, 75);
+  --club: rgb(134, 168, 255);
+  --work: rgb(252, 174, 235);
+  --️personal: rgb(255, 170, 60);
+  --school-light: rgba(221, 101, 75, 0.5);
+  --club-light: rgba(134, 168, 255, 0.5);
+  --work-light: rgba(252, 174, 235, 0.5);
+  --️personal-light: rgba(255, 170, 60, 0.5);
+  --background: #faf7f5;
+  --body-light: #e9dbd0;
+  --body: #d4bba5;
+  --body-dark: #7b5f53;
+  --shadow: rgba(123, 95, 83, 0.3);
+  --active-shadow: rgba(123, 95, 83, 0.5);
 }
 
 body {
-  background-color: #faf7f5;
+  transition: all 0.5s ease-out;
+  background-color: var(--background);
   font-family: "Kern", sans-serif;
-  color: #d4bba5;
+  color: var(--body);
 
   h1 {
     font-family: "Fitzgerald", serif;
-    color: #dd654b;
+    font-weight: 400;
+    color: var(--body);
   }
 
   .bold {
     font-weight: bold;
-    color: #7b5f53;
+    color: var(--body-dark);
   }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  background-color: none;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: var(--body-light);
+  height: 50%;
 }
