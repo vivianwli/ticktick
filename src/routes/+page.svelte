@@ -4,9 +4,10 @@
   // d3 imports
   import { scaleTime } from 'd3-scale';
 
-  
+  // svelte imports
 	import { fade, blur, fly} from 'svelte/transition';
 
+  // custom component imports
   import TaskTooltip from '$lib/components/TaskTooltip.svelte';
   import Timeline from '$lib/components/Timeline.svelte';
   import ControlPanel from '$lib/components/ControlPanel.svelte';
@@ -14,6 +15,7 @@
   // data returned from +page.server.js
   export let data: PageData;
 
+  // iterate through tasks array, converting date strings to dates and setting endpoint for incomplete tasks
   for (const task of data.tasks) {
     task.createdTime = new Date(task.createdTime);
     if (task.completedTime == undefined) {
@@ -23,6 +25,7 @@
     }
   }
 
+  // helper function to convert loaded data to a nested structure of parent/child relationships
   const buildTree = (parentId) => (task) => {
     const children = data.tasks.filter((child) => child.parentId === task.taskId);
     return {
@@ -36,6 +39,7 @@
   };
 
 
+  // helper function to set the Y values of each task when painting on the SVG
   let Y = {};
   let currentY = 0;
 
@@ -49,15 +53,19 @@
     return Y[task.taskId];
   }
 
+  // use window size to determine visualization dimensioins
   $: innerHeight = 0;
   $: innerWidth = 0;
   $: width = Math.max(0, innerWidth - 100);
   $: height = currentY + 150;
   
+  // use D3's scale library to map a dates to pixel values for plotting
   $: x = scaleTime()
     .domain([new Date("2023-01-01"), new Date("2023-05-04")])
     .range([ 0, width ]);
 
+
+  // helper functions to keep track of hovered "active" task
   let activeTask: number;
 
   const activateTask = (task) => {
@@ -68,12 +76,13 @@
     activeTask = -1;
   }
 
+  // helper function to keep track of which parent tasks are toggled to show children
   let showChildren = [];
 
   const toggleChildren = (task) => {
     if (task.children) {
       let parentY = getY(task);
-      Y = {};
+      Y = {}; // reset the Y object so that the task coordinates can be re-calculated
       currentY = 0;
       Y[task.taskId] = parentY;
       if (!showChildren.includes(task.taskId)) {
@@ -86,9 +95,11 @@
     }
   }
 
+  // m is used to position the tooltip ("mouse" location on the screen)
 	// in the case that x and y position aren't set, the cursor should fall back on a position that is out of view -- in this case, (-500, -500)
 	let m = { x: -500, y: -500 };
 
+  // helper functions to sort and filter the data -- connected with ControlPanel component
   let sortBy;
   let filterTo;
 
@@ -122,7 +133,7 @@
   }
 
   const filter = (filterType) => {
-    Y = {};
+    Y = {}; // reset the Y object so that the task coordinates can be re-calculated
     currentY = 0;
     if (filterType === "show all") {
       sortedData.tasks = [...nestedData.tasks];
@@ -157,11 +168,13 @@
         <TaskTooltip task={data.tasks.find(t => t.taskId === activeTask)} />
       </div>
     {/if}
+
+    <!-- key block destroys and re-creates visualization whenever the data is changed -->
     {#key sortedData}
       {#key showChildren}
         <svg width={width + 50} height={height}>
           <g>
-            <!-- looping through to render each circle -->
+            <!-- looping through to render each task -->
             {#each sortedData.tasks as task (task.taskId)}
               <g class="task {activeTask === task.taskId ? "active" : (activeTask > -1 ? "inactive" : "")}" in:blur={{duration: 500, delay: 300}} out:blur={{duration: 500}} on:click={() => toggleChildren(task)} on:mouseover={() => activateTask(task)} on:mouseout={deactivateTask}>
                 <rect x={x(task.createdTime)} y={Math.max(5, getY(task) - 10)} width={x(task.completedTime)-x(task.createdTime)} height=20 opacity=0/> 
@@ -189,6 +202,8 @@
                   stroke="var(--{task.listName.slice(2).trim()})"
                   stroke-width=2
                 />
+
+                <!-- add a label for parent tasks -->
                 {#if task.children}
                   <text 
                     class="parent-label" 
@@ -200,6 +215,8 @@
                   </text>
                 {/if}
               </g>
+
+              <!-- loop through to render each child task if parent is toggled open -->
               {#if showChildren.includes(task.taskId)}
                   {#each task.children as childTask (childTask.taskId)}
                     <g class="task {activeTask === childTask.taskId ? "active" : (activeTask > -1 ? "inactive" : "")} child" in:fly={{y: -10, duration: 300, delay: 450}} out:fly={{y: 10, duration: 300}} on:mouseover={() => activateTask(childTask)} on:mouseout={deactivateTask}>
