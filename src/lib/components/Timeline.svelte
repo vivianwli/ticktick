@@ -77,6 +77,9 @@
   }
 
   .timeline-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
     padding-left: 2rem;
   }
   

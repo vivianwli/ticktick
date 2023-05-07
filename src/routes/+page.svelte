@@ -15,16 +15,16 @@
 
   // data returned from +page.server.js
   export let data: PageData;
-  
-  $: console.log(data);
 
   // iterate through tasks array, converting date strings to dates and setting endpoint for incomplete tasks
-  for (const task of data.tasks) {
-    task.createdTime = new Date(task.createdTime);
-    if (task.completedTime == undefined) {
-      task.completedTime = new Date("2023-05-04");
-    } else {
-      task.completedTime = new Date(task.completedTime);
+  if (data.tasks.length > 0) {
+    for (const task of data.tasks) {
+      task.createdTime = new Date(task.createdTime);
+      if (task.completedTime == undefined) {
+        task.completedTime = new Date("2023-05-04");
+      } else {
+        task.completedTime = new Date(task.completedTime);
+      }
     }
   }
 
