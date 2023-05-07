@@ -183,7 +183,7 @@
           <g>
             <!-- looping through to render each task -->
             {#each sortedData.tasks as task (task.taskId)}
-              <g class="task {activeTask === task.taskId ? "active" : (activeTask > -1 ? "inactive" : "")}" in:blur={{duration: 500, delay: 300}} out:blur={{duration: 500}} on:click={() => toggleChildren(task)} on:mouseover={() => activateTask(task)} on:mouseout={deactivateTask}>
+              <g class="task {activeTask === task.taskId ? "active" : (activeTask > -1 ? "inactive" : "")} {task.children ? "parent" : ""}" in:blur={{duration: 500, delay: 300}} out:blur={{duration: 500}} on:click={() => toggleChildren(task)} on:mouseover={() => activateTask(task)} on:mouseout={deactivateTask}>
                 <rect x={x(task.createdTime)} y={Math.max(5, getY(task) - 10)} width={x(task.completedTime)-x(task.createdTime)} height=20 opacity=0/> 
                 <line
                   x1={x(task.createdTime)} 
@@ -319,25 +319,28 @@
   }
 
   .task {
-      filter: drop-shadow(0 0 1px var(--shadow));
-      * {
-        transition: all 0.3s;
+    filter: drop-shadow(0 0 1px var(--shadow));
+    * {
+      transition: all 0.3s;
+    }
+    &.active {
+      filter: drop-shadow(0 0 3px var(--active-shadow));
+    }
+    &.inactive {
+      line {
+        stroke: var(--body-light);
       }
-      &.active {
-        filter: drop-shadow(0 0 3px var(--active-shadow));
+      circle {
+        stroke: var(--body-light);
+        fill: var(--body-light);
       }
-      &.inactive {
-        line {
-          stroke: var(--body-light);
-        }
-        circle {
-          stroke: var(--body-light);
-          fill: var(--body-light);
-        }
-        text {
-          fill: var(--body-light);
-        }
+      text {
+        fill: var(--body-light);
       }
+    }
+    &.parent {
+      cursor: pointer;
+    }
   }
 
   .parent-label {
