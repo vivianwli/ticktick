@@ -14,7 +14,11 @@
   import Info from '$lib/components/Info.svelte';
 
   // data returned from +page.server.js
-  export let data: PageData = { tasks: [] };
+  export let data: PageData;
+
+  if (!data.tasks || !data.tasks.length) {
+    data = { tasks: [] };
+  }
 
   // iterate through tasks array, converting date strings to dates and setting endpoint for incomplete tasks
   for (const task of data.tasks) {
