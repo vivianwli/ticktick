@@ -15,6 +15,8 @@
 
   // data returned from +page.server.js
   export let data: PageData;
+  
+  $: console.log(data);
 
   // iterate through tasks array, converting date strings to dates and setting endpoint for incomplete tasks
   for (const task of data.tasks) {
