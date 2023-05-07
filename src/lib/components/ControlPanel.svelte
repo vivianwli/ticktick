@@ -7,16 +7,17 @@
 </script>
 
 <div class="panel-container">
-  <div class="option-list">
-    <div class="list-title">
-      filter to
-    </div>
-    {#each filterOptions as filterOption}
-      <div style="color: var(--{filterOption.slice(2).trim()})" class="option {filter === filterOption ? "selected" : ""}" on:click={() => {filter = filterOption}}>
-        {filterOption}
+    <div class="option-list">
+      <div class="list-title">
+        filter to
       </div>
-    {/each}
-  </div>
+      {#each filterOptions as filterOption}
+        <div style="color: var(--{filterOption.slice(2).trim()})" class="option {filter === filterOption ? "selected" : ""}" on:click={() => {filter = filterOption}}>
+          {filterOption}
+        </div>
+      {/each}
+    </div>
+  <!-- </div> -->
   <div class="option-list">
     <div class="list-title">
       sort by

@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:herecomesthesun@localhost:5432/todos-db?schema=public"
+  url      = env("DATABASE_URL")
 }
 
 model Task {

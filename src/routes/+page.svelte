@@ -11,6 +11,7 @@
   import TaskTooltip from '$lib/components/TaskTooltip.svelte';
   import Timeline from '$lib/components/Timeline.svelte';
   import ControlPanel from '$lib/components/ControlPanel.svelte';
+  import Info from '$lib/components/Info.svelte';
 
   // data returned from +page.server.js
   export let data: PageData;
@@ -152,14 +153,16 @@
 <svelte:window bind:innerHeight bind:innerWidth/>
 
 <div>
+  <Info />
   <div class="header">
-    <h1>Vivian Li: Spring 2023 in "To-Do"s</h1>
+    <h1>Vivian Li's Spring 2023 in "To-Do"s</h1>
     <ControlPanel bind:filter={filterTo} bind:sort={sortBy}/>
   </div>
 
   <div class="viz-container" on:mousemove={(e) => (m = { x: e.clientX, y: e.clientY })}>
-    
-    <Timeline {width} scale={x} {m}/>
+    <div class="timeline-outer-container" in:fly={{y: 10, duration: 800, delay: 1600}}>
+      <Timeline {width} {m}/>
+    </div>
     
     {#if activeTask > -1}
       <div
@@ -344,4 +347,11 @@
     text-anchor: end;
     font-size: small;
   }
+
+  .timeline-outer-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
+
 </style>
