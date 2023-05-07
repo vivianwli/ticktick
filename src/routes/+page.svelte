@@ -340,12 +340,6 @@
       }
   }
 
-  circle {
-    .incomplete {
-      fill: none !important;
-    }
-  }
-
   .parent-label {
     font-family: "Fitzgerald", serif;
     text-anchor: end;
