@@ -2,7 +2,7 @@
   import Tag from "./Tag.svelte";
   export let task;
 
-  const listName = task.listName.slice(2).trim();
+  $: listName = task.listName.slice(2).trim();
   const tags = task.tags?.split(', ') || [];
 </script>
 
